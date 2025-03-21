@@ -1,0 +1,13 @@
+.Cart{
+    display: flex;
+    
+    justify-content: space-between;
+}
+
+.payment-product-card{
+    width: 60%;
+    
+}
+.payment-details{
+    width: 40%;
+}

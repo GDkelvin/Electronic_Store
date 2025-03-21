@@ -42,12 +42,29 @@ export class ProductsService {
     return this.productRepository.save(newProduct);
   }
 
+  //get all product
   async findAll(): Promise<Product[]> {
     const products = await this.productRepository.find();
     //console.log("Products from DB:", products);
     return products;
   }
 
+  //filter product by category
+  async findProductsByCategory(categoryId: number) {
+    return await this.productRepository.find({
+      where: { category: { id: categoryId } },
+      relations: ['category'],
+    });
+  }
+
+  async findProductsByCategoryName(categoryName: string) {
+    return await this.productRepository.find({
+      where: { category: { name: categoryName } }, 
+      relations: ['category'], 
+    });
+  }
+
+  //get 1 product
   async findProductById(id: number): Promise<Product>{
     const product = await this.productRepository.findOne({where: {id}, relations: ['brand'],});
     if(!product){
@@ -55,6 +72,8 @@ export class ProductsService {
     }
     return product;
   }
+
+
   // findOne(id: number) {
   //   return `This action returns a #${id} product`;
   // }

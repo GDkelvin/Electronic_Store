@@ -40,7 +40,7 @@ const Navbar = () => {
                     <div className="nav-links-container">
                         <div><Link to="/" className={location.pathname === "/" ? "active" : ""}>Home</Link></div>
                         <div className="nav-dropdown-menu" onMouseEnter={() => setIsCategoryMenuOpen(true)} onMouseLeave={() => setIsCategoryMenuOpen(false)}>
-                            <Link to="/product" className={location.pathname.startsWith("/product") ? "active" : ""}>Products</Link>
+                            <Link to="/products" className={location.pathname.startsWith("/product") ? "active" : ""}>Products</Link>
                             {isCategoryMenuOpen && (
                                 <div className="idk">
                                     <CategoryMenu onClose={() => setIsCategoryMenuOpen(false)} />

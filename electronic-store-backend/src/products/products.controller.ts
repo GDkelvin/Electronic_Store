@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
+import { Category } from 'src/category/entities/category.entity';
 
 @Controller('products')
 export class ProductsController {
@@ -17,6 +18,31 @@ export class ProductsController {
   async getAllProduct(): Promise<Product[]> {
     return this.productsService.findAll();
   }
+
+  @Get('category')
+  async getProductsByCategory(
+    @Query('id') categoryId?: string,
+    @Query('name') categoryName?: string
+  ) {
+    if (categoryName) {
+      return await this.productsService.findProductsByCategoryName(categoryName);
+    }
+    if (categoryId) {
+      return await this.productsService.findProductsByCategory(Number(categoryId));
+    }
+    return [];
+  }
+
+  // @Get('category/:categoryName')
+  // async getProductsByCategoryName(@Param('categoryName') categoryName: string) {
+  //   return await this.productsService.findProductsByCategoryName(categoryName);
+  // }
+
+  // @Get('category/:categoryId')
+  // async getProductByCategory(@Param('categoryId') CategoryId: string){
+  //   return await this.productsService.findProductsByCategory(Number(CategoryId));
+  // }
+
 
   @Get(':id')
   async getProduct(@Param('id') id: number): Promise<Product> {

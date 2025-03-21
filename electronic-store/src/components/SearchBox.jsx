@@ -1,51 +1,38 @@
 import React, { useState } from "react";
-import "../css/SearchBox.css";
+import styles from "../css/SearchBox.module.css";
 
-const SearchBox = ({ suggestions = [], products = [], onClose }) => {
+const SearchBox = ({ products = [], onClose }) => {
     const [searchTerm, setSearchTerm] = useState("");
 
     return (
-        <div className="search-box">
-            {/* Thanh tìm kiếm + nút Exit */}
-            <div className="search-header">
+        <div className={styles.searchBox}>
+            <div className={styles.searchHeader}>
                 <input
                     type="text"
                     placeholder="Search for a product..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <button className="exit-btn" onClick={onClose}>✖</button>
+                <button className={styles.exitBtn} onClick={onClose}>✖</button>
             </div>
 
-            <p style={{ fontSize: "12px", color: "#666", marginTop: "8px" }}>
-                View {products.length} results
-            </p>
-
-            {/* Kết quả tìm kiếm */}
-            <div className="results">
-                <div className="left-results">
-                    {suggestions.length > 0 ? (
-                        suggestions.map((item, index) => (
-                            <li key={index}>{item}</li>
-                        ))
-                    ) : (
-                        <p>No suggestions found.</p>
-                    )}
-                    <p className="view-more">View more</p>
-                </div>
-
-                <div className="right-results">
-                    {products.length > 0 ? (
-                        products.map((product, index) => (
-                            <div key={index} className="product-item">
-                                <img src={product.image} alt={product.name} />
-                                <p>{product.name}</p>
+            <div className={styles.results}>
+                {products.length > 0 ? (
+                    products.map((product, index) => (
+                        <div key={index} className={styles.productItem}>
+                            <div className={styles.productInfo}>
+                                <p className={styles.productName}>{product.name}</p>
+                                <p className={styles.productPrice}>{product.price}đ</p>
+                                {product.oldPrice && (
+                                    <p className={styles.productOldPrice}>{product.oldPrice}đ</p>
+                                )}
                             </div>
-                        ))
-                    ) : (
-                        <p>No products found.</p>
-                    )}
-                </div>
+                            <img src={product.image} alt={product.name} className={styles.productImage} />
+                        </div>
+                    ))
+                ) : (
+                    <p className={styles.noResults}>No products found.</p>
+                )}
             </div>
         </div>
     );

@@ -28,3 +28,21 @@
   color: black;
 }
 
+.category.active {
+  color: black;
+}
+.category::after {
+  content: "";
+  width: 0%;
+  height: 2px;
+  background-color: #0C68F4;
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  transition: width 0.3s ease-in-out;
+}
+
+.category.active::after {
+  width: 100%;
+}

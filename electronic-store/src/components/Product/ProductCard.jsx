@@ -10,7 +10,7 @@ const ProductCard = ({product}) => {
     if(!product) return (<p>Loading ...</p>);
     return (
         <>
-            <Link to={`/product/${product.id}`}>
+            <Link to={`/products/${product.id}`}>
                 <div className="product-card">
                     <div className="product-discount">-12%</div>
                         
@@ -24,7 +24,7 @@ const ProductCard = ({product}) => {
                         <p className="product-name">{product.name}</p>
 
                         <div className="product-footer">
-                            <span className="product-price">{product.price}</span>
+                            <span className="product-price">${Number(product.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                             <div className="product-rating">
                                 <i className="bi bi-star-fill star-icon"></i>
                                 <span className="rating-score">4.3</span>

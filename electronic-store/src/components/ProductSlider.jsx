@@ -1,14 +1,17 @@
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Autoplay } from "swiper/modules";
 import { Link } from "react-router-dom";
 import "swiper/css";
-import "swiper/css/bundle";
 import "swiper/css/navigation";
+import "swiper/css/autoplay";
 import styles from "../css/ProductSlider.module.css";
 import laptopImg from "../assets/Laptop.jpg";
 
 const ProductSlider = ({ products }) => {
+  // Filter only products with a discount
+  const saleProducts = products.filter(product => parseFloat(product.discount) > 0);
+
   return (
     <div className={styles.sliderContainer}>
       <div className={styles.sliderWrapper}>
@@ -17,36 +20,48 @@ const ProductSlider = ({ products }) => {
           <p>Shop Now!</p>
         </div>
 
-        <Swiper
-          slidesPerView={4}
-          spaceBetween={20}
-          breakpoints={{
-            1024: { slidesPerView: 4, spaceBetween: 20 },
-            768: { slidesPerView: 3, spaceBetween: 15 },
-            640: { slidesPerView: 2, spaceBetween: 10 },
-            0: { slidesPerView: 1, spaceBetween: 5 },
-          }}
-          navigation
-          className={styles.productSlider}
-        >
-          {products.length === 0 ? (
-            <h3>No products available</h3>
-          ) : (
-            products.map((product, index) => (
-              <SwiperSlide key={product.id || index}>
-                <Link to={`/products/${product.id}`} style={{ textDecoration: "none", color: "inherit" }}>
-                  <div className={styles.productCard}>
-                    <span className={styles.discountBadge}>{product.discount}</span>
-                    <img src={laptopImg} alt={product.name} />
-                    <h4>{product.name}</h4>
-                    <p className={styles.oldPrice}>${product.price}</p>
-                    <p className={styles.newPrice}>${product.price}</p>
-                  </div>
-                </Link>
-              </SwiperSlide>
-            ))
-          )}
-        </Swiper>
+        {saleProducts.length === 0 ? (
+          <h3 style={{ textAlign: "center", padding: "20px" }}>No products on sale</h3>
+        ) : (
+          <Swiper
+            slidesPerView={4}
+            spaceBetween={20}
+            navigation={true}
+            autoplay={{
+              delay: 3000,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: false,
+            }}
+            modules={[Navigation, Autoplay]}
+            breakpoints={{
+              1024: { slidesPerView: 4, spaceBetween: 20 },
+              768: { slidesPerView: 3, spaceBetween: 15 },
+              640: { slidesPerView: 2, spaceBetween: 10 },
+              0: { slidesPerView: 1, spaceBetween: 5 },
+            }}
+            className={styles.productSlider}
+          >
+            {saleProducts.map((product) => {
+              const price = parseFloat(product.price);
+              const discount = parseFloat(product.discount);
+              const discountedPrice = (price * (1 - discount)).toFixed(2);
+
+              return (
+                <SwiperSlide key={product.id}>
+                  <Link to={`/products/${product.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                    <div className={styles.productCard}>
+                      <span className={styles.discountBadge}>-{(discount * 100).toFixed(0)}%</span>
+                      <img src={laptopImg} alt={product.name} />
+                      <h4>{product.name}</h4>
+                      <p className={styles.oldPrice}>${price.toFixed(2)}</p>
+                      <p className={styles.newPrice}>${discountedPrice}</p>
+                    </div>
+                  </Link>
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        )}
       </div>
     </div>
   );

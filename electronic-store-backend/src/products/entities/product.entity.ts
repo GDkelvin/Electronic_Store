@@ -15,6 +15,9 @@ export class Product {
     @Column({ type: 'decimal', precision: 10, scale: 2 })
     price: number;
 
+    @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+    discount?: number; 
+
     @ManyToOne(() => Category, category => category.id, {eager: true})
     category: Category;
 
@@ -24,8 +27,14 @@ export class Product {
     @Column({ type: 'int', default: 0 })
     stock: number;
 
+    @Column({ type: 'int', default: 0 })
+    sales_count: number;
+
     @Column({ type: 'jsonb' })
     attributes: Record<string, any>;
+
+    @Column({ type: 'text', nullable: true })
+    image?: string;
 
     @CreateDateColumn()
     created_at: Date;

@@ -53,7 +53,7 @@ const Navbar = () => {
 
                 <div className="nav-icon">
                     <i className="bi bi-search" onClick={() => setIsSearchOpen(true)}></i>
-                    <i className="bi bi-basket2"></i>
+                    <Link to="/cart" style={{textDecoration:"none" ,color: "inherit"}}><i className="bi bi-basket2"></i></Link>
 
                     {user ? (
                         <div className="user-info">

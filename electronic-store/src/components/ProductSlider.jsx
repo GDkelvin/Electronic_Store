@@ -44,7 +44,9 @@ const ProductSlider = ({ products }) => {
             {saleProducts.map((product) => {
               const price = parseFloat(product.price);
               const discount = parseFloat(product.discount);
-              const discountedPrice = (price * (1 - discount)).toFixed(2);
+              const discountedPrice = (price * (1 - discount)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+              const formattedOriginalPrice = price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 
               return (
                 <SwiperSlide key={product.id}>
@@ -53,7 +55,7 @@ const ProductSlider = ({ products }) => {
                       <span className={styles.discountBadge}>-{(discount * 100).toFixed(0)}%</span>
                       <img src={laptopImg} alt={product.name} />
                       <h4>{product.name}</h4>
-                      <p className={styles.oldPrice}>${price.toFixed(2)}</p>
+                      <p className={styles.oldPrice}>${formattedOriginalPrice}</p>
                       <p className={styles.newPrice}>${discountedPrice}</p>
                     </div>
                   </Link>

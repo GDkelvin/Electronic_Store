@@ -1,14 +1,22 @@
-import "../../css/ShippingDetails.css";
-import { useState } from "react";
 
-const ShippingDetails = () => {
+import "../../css/ShippingDetails.css";
+import { useState, useEffect } from "react";
+
+const ShippingDetails = ({ setAddress }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [address, setAddress] = useState({
-        street: "25 Đường First, Phường 1",
-        district: "Quận Bình Thạnh",
-        city: "TP. Hồ Chí Minh",
-        postalCode: "700000"
+    const [address, setLocalAddress] = useState({
+        street: "",
+        district: "",
+        city: "",
+        postalCode: ""
     });
+
+    useEffect(() => {
+        const storedAddress = JSON.parse(localStorage.getItem("address"));
+        if (storedAddress) {
+            setLocalAddress(storedAddress);
+        }
+    }, []);
 
     const [tempAddress, setTempAddress] = useState({ ...address });
 
@@ -22,21 +30,23 @@ const ShippingDetails = () => {
     };
 
     const handleSave = () => {
-        setAddress(tempAddress); 
+        setLocalAddress(tempAddress);
+        setAddress(tempAddress);
+        localStorage.setItem("address", JSON.stringify(tempAddress));
         setIsModalOpen(false);
     };
 
     return (
         <div className="Shipping-detail">
             <div className="SD-container">
-                <label>Tên người nhận</label>
+                <label>User</label>
                 <input type="text" value="Quoc Bao" readOnly />
-
-                <label>Gửi đến</label>
+                
+                <label>Ship to</label>
                 <div className="editable-input">
                     <input 
                         type="text" 
-                        value={`${address.street}, ${address.district}, ${address.city}`} 
+                        value={address.street ? `${address.street}, ${address.district}, ${address.city}` : "No address entered"} 
                         readOnly 
                     />
                     <i className="bi bi-pencil edit-icon" onClick={handleOpenModal}></i>

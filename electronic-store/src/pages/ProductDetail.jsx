@@ -35,6 +35,7 @@ const ProductDetail = () => {
         <>
             <Breadcrumb></Breadcrumb>
             <div className="BPD">
+                
                 <div >
                     <BasicProductDetails product={product}/>
                     <TechnicalDetails attributes={product.attributes}/>

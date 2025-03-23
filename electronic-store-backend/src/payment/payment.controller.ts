@@ -2,33 +2,25 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { Payment } from './entities/payment.entity';
 
 @Controller('payment')
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
   @Post()
-  create(@Body() createPaymentDto: CreatePaymentDto) {
-    return this.paymentService.create(createPaymentDto);
-  }
+  async makePayment(@Body() createPaymentDto: CreatePaymentDto) {
+      return this.paymentService.processPayment(createPaymentDto);
+  } 
 
   @Get()
-  findAll() {
-    return this.paymentService.findAll();
+  async getAllPayments(): Promise<Payment[]> {
+    return await this.paymentService.getAllPayments();
   }
 
+  // Get payment by ID
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.paymentService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
-    return this.paymentService.update(+id, updatePaymentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.paymentService.remove(+id);
+  async getPaymentById(@Param('id') id: number): Promise<Payment> {
+    return await this.paymentService.getPaymentById(id);
   }
 }

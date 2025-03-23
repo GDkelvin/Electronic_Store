@@ -15,9 +15,13 @@ export class ProductsController {
   }
 
   @Get()
-  async getAllProduct(): Promise<Product[]> {
-    return this.productsService.findAll();
+  async getAllProduct(
+    @Query('category') categoryName?: string,
+    @Query('brand') brandName?: string
+  ): Promise<Product[]> {
+    return this.productsService.findAll(categoryName, brandName);
   }
+
 
   @Get('category')
   async getProductsByCategory(
@@ -34,10 +38,24 @@ export class ProductsController {
   }
 
   @Get('search')
-async searchProducts(@Query('name') name: string): Promise<Product[]> {
-  if (!name) return [];
-  return this.productsService.searchProductsByName(name);
-}
+  async searchProducts(@Query('name') name: string): Promise<Product[]> {
+    if (!name) return [];
+    return this.productsService.searchProductsByName(name);
+  }
+
+  @Get('brand')
+  async getProductsByBrand(
+    @Query('id') brandId?: string,
+    @Query('name') brandName?: string
+  ) {
+    if (brandName) {
+      return await this.productsService.findProductsByBrandName(brandName);
+    }
+    if (brandId) {
+      return await this.productsService.findProductsByBrand(Number(brandId));
+    }
+    return [];
+  }
 
   // @Get('category/:categoryName')
   // async getProductsByCategoryName(@Param('categoryName') categoryName: string) {
@@ -54,5 +72,5 @@ async searchProducts(@Query('name') name: string): Promise<Product[]> {
   async getProduct(@Param('id') id: number): Promise<Product> {
     return this.productsService.findProductById(id);
   }
-  
+
 }

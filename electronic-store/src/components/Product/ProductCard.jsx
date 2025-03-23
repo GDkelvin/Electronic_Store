@@ -10,8 +10,12 @@ const ProductCard = ({ product }) => {
     const price = parseFloat(product.price);
     const discount = parseFloat(product.discount);
     const discountedPrice = discount > 0
-        ? (price * (1 - discount)).toFixed(2)
-        : price.toFixed(2);
+    ? (price * (1 - discount)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const formattedOriginalPrice = price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+
     const discountPercentage = discount > 0 ? `-${(discount * 100).toFixed(0)}%` : null;
 
     return (
@@ -32,7 +36,7 @@ const ProductCard = ({ product }) => {
                         <span className="product-price">${discountedPrice}</span>
                         {discount > 0 && (
                             <span className="product-old-price" style={{ textDecoration: "line-through", color: "gray", marginLeft: "8px" }}>
-                                ${price.toFixed(2)}
+                                ${formattedOriginalPrice}
                             </span>
                         )}
                         <div className="product-rating">

@@ -1,7 +1,7 @@
 import styles from "../../css/PaymentMethod.module.css";
 import { useState } from "react";
 
-const PaymentMethod = () => {
+const PaymentMethod = ({ address }) => {
   const [paymentMethod, setPaymentMethod] = useState("creditCard");
 
   return (
@@ -18,8 +18,7 @@ const PaymentMethod = () => {
           />
           <span>Credit Cards</span>
           <span className={styles.cardInfo}></span>
-          <button className={styles.editButton}>✏️</button>
-          {/* <button className={styles.addButton}>+</button> */}
+          <button className={styles.editButton}></button>
         </label>
         <label className={`${styles.labelPaypal} ${paymentMethod === "paypal" ? styles.selected : ""}`}>
           <input
@@ -35,8 +34,12 @@ const PaymentMethod = () => {
 
       <h3>Billing address</h3>
       <div className={styles.billingAddress}>
-        <span>Same as shipping address</span>
-        <button className={styles.editButton}>✏️</button>
+        {address ? (
+          <span>{`${address.street}, ${address.district}, ${address.city}, ${address.postalCode}`}</span>
+        ) : (
+          <span>No address provided</span>
+        )}
+        <button className={styles.editButton}></button>
       </div>
     </div>
   );

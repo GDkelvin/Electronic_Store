@@ -1,29 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom"; // Import useSearchParams
-import ProductCategory from '../components/Product/ProductCategory'
-import ProductCard from '../components/Product/ProductCard'
-import ProductFilter from '../components/Product/ProductFilter'
+import { useSearchParams } from "react-router-dom";
+import ProductCategory from '../components/Product/ProductCategory';
+import ProductCard from '../components/Product/ProductCard';
+import ProductFilter from '../components/Product/ProductFilter';
 import Breadcrumb from "../components/Breadcrumb";
-import "../css/Product.css"
+import "../css/Product.css";
 
 const Product = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchParams] = useSearchParams(); 
-  const selectedCategory = searchParams.get("name"); 
-  const [sorting, setSorting] = useState("newArrivals")
+  const [searchParams] = useSearchParams();
+  const selectedCategory = searchParams.get("name");
+  const [sorting, setSorting] = useState("newArrivals");
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 99999 });
+  const [selectedBrands, setSelectedBrands] = useState([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
-        let url = "http://localhost:3000/products";
+        let url = "http://localhost:3000/products?";
         if (selectedCategory) {
-          url = `http://localhost:3000/products/category?name=${selectedCategory}`;
+          url += `category=${selectedCategory}&`;
+        }
+        if (selectedBrands.length > 0) {
+          url += `brand=${selectedBrands.join(",")}&`; // Convert array to comma-separated string
         }
         const response = await fetch(url);
         const data = await response.json();
-        console.log("Fetched Products:", data);
         setProducts(data);
       } catch (e) {
         console.error("Failed to load products: ", e);
@@ -32,29 +36,35 @@ const Product = () => {
       }
     };
     fetchProduct();
-  }, [selectedCategory]); // Re-fetch when category changes
+  }, [selectedCategory, selectedBrands]);
 
-  const sortProducts = [...products].sort((a,b) => {
-    if(sorting === "priceAscending"){
-      return a.price - b.price;
-    }
-    if(sorting === "priceDescending"){
-      return b.price - a.price;
-    }
-    return 0;
-  })
+  const sortProducts = [...products]
+    .filter((product) => product.price >= priceRange.min && product.price <= priceRange.max)
+    .sort((a, b) => {
+      if (sorting === "newArrivals") {
+        return new Date(b.created_at) - new Date(a.created_at);
+      }
+      if (sorting === "priceAscending") {
+        return a.price - b.price;
+      }
+      if (sorting === "priceDescending") {
+        return b.price - a.price;
+      }
+      return 0;
+    });
 
   return (
     <>
       <Breadcrumb />
       <div className="product-page">
+
         <div className="category-section">
-          <ProductCategory /> 
+          <ProductCategory />
         </div>
 
         <div className="content-container">
           <div className="filter-section">
-            <ProductFilter />
+            <ProductFilter onBrandChange={setSelectedBrands} onPriceChange={setPriceRange} />
           </div>
 
           <div className="product-section">

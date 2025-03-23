@@ -10,44 +10,56 @@ import { error } from 'console';
 
 @Injectable()
 export class ProductsService {
-  
+
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
-    @InjectRepository(Category) 
+    @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-    @InjectRepository(Brand) 
+    @InjectRepository(Brand)
     private readonly brandRepository: Repository<Brand>,
-   
+
   ) { }
-  
-  //
+
+  //create product
   async create(createProductDto: CreateProductDto) {
     const { categoryId, brandId, ...productData } = createProductDto;
-  
-    
+
+
     const category = await this.categoryRepository.findOne({ where: { id: categoryId } });
     const brand = await this.brandRepository.findOne({ where: { id: brandId } });
-  
+
     if (!category || !brand) {
       throw new Error('Invalid categoryId or brandId');
     }
-  
+
     const newProduct = this.productRepository.create({
       ...productData,
       category,
       brand,
     });
-  
+
     return this.productRepository.save(newProduct);
   }
 
   //get all product
-  async findAll(): Promise<Product[]> {
-    const products = await this.productRepository.find();
-    //console.log("Products from DB:", products);
-    return products;
+  async findAll(categoryName?: string, brandName?: string): Promise<Product[]> {
+    const query = this.productRepository.createQueryBuilder("product")
+      .leftJoinAndSelect("product.category", "category")
+      .leftJoinAndSelect("product.brand", "brand");
+  
+    if (categoryName) {
+      query.andWhere("category.name = :categoryName", { categoryName });
+    }
+    
+    if (brandName) {
+      const brandNames = brandName.split(","); 
+      query.andWhere("brand.name IN (:...brandNames)", { brandNames });
+    }
+  
+    return query.getMany();
   }
+  
 
   //filter product by category
   async findProductsByCategory(categoryId: number) {
@@ -59,15 +71,15 @@ export class ProductsService {
 
   async findProductsByCategoryName(categoryName: string) {
     return await this.productRepository.find({
-      where: { category: { name: categoryName } }, 
-      relations: ['category'], 
+      where: { category: { name: categoryName } },
+      relations: ['category'],
     });
   }
 
   //get 1 product
-  async findProductById(id: number): Promise<Product>{
-    const product = await this.productRepository.findOne({where: {id}, relations: ['brand'],});
-    if(!product){
+  async findProductById(id: number): Promise<Product> {
+    const product = await this.productRepository.findOne({ where: { id }, relations: ['brand'], });
+    if (!product) {
       throw new NotFoundException("Product not found");
     }
     return product;
@@ -75,8 +87,22 @@ export class ProductsService {
 
   async searchProductsByName(name: string): Promise<Product[]> {
     return this.productRepository.find({
-      where: { name: ILike(`%${name}%`) }, 
+      where: { name: ILike(`%${name}%`) },
     });
   }
-  
+
+  //filter product by brand
+  async findProductsByBrand(brandId: number) {
+    return await this.productRepository.find({
+      where: { brand: { id: brandId } },
+      relations: ['brand'],
+    });
+  }
+
+  async findProductsByBrandName(brandName: string) {
+    return await this.productRepository.find({
+      where: { brand: { name: brandName } },
+      relations: ['brand'],
+    });
+  }
 }

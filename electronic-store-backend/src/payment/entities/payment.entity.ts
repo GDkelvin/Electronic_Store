@@ -5,23 +5,23 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn } f
 @Entity('payments')
 export class Payment {
     @PrimaryGeneratedColumn()
-  id: number;
+    id: number;
 
-  @ManyToOne(() => Order, order => order.id)
-  order: Order;
+    @ManyToOne(() => Order, order => order.payments, { onDelete: 'CASCADE' })
+    order: Order;
 
-  @ManyToOne(() => User, user => user.id)
-  user: User;
+    @ManyToOne(() => User, user => user.id, { eager: true })
+    user: User;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  amount: number;
+    @Column({ type: 'decimal', precision: 10, scale: 2 })
+    amount: number;
 
-  @Column({ type: 'varchar', length: 50, default: 'pending' })
-  status: string;
+    @Column({ type: 'varchar', length: 50 })
+    payment_method: string; // e.g., 'credit_card', 'paypal'
 
-  @Column({ type: 'varchar', length: 50 })
-  payment_method: string;
+    @Column({ type: 'varchar', length: 50, default: 'pending' })
+    status: string; // 'pending' | 'completed' | 'failed'
 
-  @CreateDateColumn()
-  created_at: Date;
+    @CreateDateColumn()
+    created_at: Date;
 }

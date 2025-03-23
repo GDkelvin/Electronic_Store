@@ -7,15 +7,15 @@ export class OrderItem {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Order, order => order.id)
+    @ManyToOne(() => Order, order => order.items, { onDelete: 'CASCADE' })
     order: Order;
 
-    @ManyToOne(() => Product, product => product.id)
+    @ManyToOne(() => Product, product => product.id, { eager: true })
     product: Product;
 
     @Column({ type: 'int' })
     quantity: number;
 
     @Column({ type: 'decimal', precision: 10, scale: 2 })
-    price: number;
+    price: number; // Price per unit (including discounts)
 }

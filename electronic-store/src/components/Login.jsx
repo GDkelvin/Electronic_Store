@@ -31,7 +31,14 @@ function Login() {
             window.location.reload(); 
             
         } catch (error) {
-            setErrors({ login: "Invalid email or password" });
+            if (error.response) {
+                setErrors({ login: error.response.data.message || "Invalid email or password" });
+            } else if (error.request) {
+                alert("Server error. Please try again later.");
+            } else {
+                // Other unexpected errors
+                setErrors({ login: "An unexpected error occurred. Please try again." });
+            }
         }
     };
 

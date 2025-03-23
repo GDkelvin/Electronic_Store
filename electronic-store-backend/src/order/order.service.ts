@@ -39,8 +39,6 @@ export class OrderService {
     return order;
   }
 
-
-
   //Post order
   async createOrder(dto: CreateOrderDto) {
     const { userId, items, total_price, shipping_address } = dto;
@@ -67,4 +65,6 @@ export class OrderService {
 
     return savedOrder;
   }
+
+  
 }

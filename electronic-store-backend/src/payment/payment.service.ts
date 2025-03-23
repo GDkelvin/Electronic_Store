@@ -5,6 +5,7 @@ import { Payment } from "./entities/payment.entity";
 import { Order } from "src/order/entities/order.entity";
 import { CreatePaymentDto } from "./dto/create-payment.dto";
 import { User } from "src/user/entities/user.entity";
+import { Product } from "src/products/entities/product.entity";
 
 @Injectable()
 export class PaymentService {
@@ -17,12 +18,15 @@ export class PaymentService {
 
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>
   ) { }
 
   async processPayment(dto: CreatePaymentDto) {
     const { orderId, userId, amount, paymentMethod } = dto;
 
-    const order = await this.orderRepository.findOne({ where: { id: orderId } });
+    const order = await this.orderRepository.findOne({ where: { id: orderId }, relations: ['items', 'items.product'],  });
     if (!order) throw new Error("Order not found");
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
@@ -39,6 +43,10 @@ export class PaymentService {
     order.status = "paid";
     await this.orderRepository.save(order);
 
+    for (const item of order.items) {
+      item.product.sales_count += item.quantity;
+      await this.productRepository.save(item.product);
+  }
     return { message: "Payment successful", payment };
   }
 

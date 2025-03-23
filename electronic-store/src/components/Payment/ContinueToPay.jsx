@@ -21,73 +21,82 @@ const ContinueToPay = ({ cart, setCart, address }) => {
             alert("Please enter a shipping address before proceeding.");
             return;
         }
-
+    
         const storedUser = localStorage.getItem("user");
         if (!storedUser) {
             alert("You must be logged in to place an order.");
             return;
         }
-
+    
         const user = JSON.parse(storedUser);
         const userId = user?.id;
         if (!userId) {
             alert("User ID is missing. Please log in again.");
             return;
         }
-
+    
         try {
             let currentOrderId = orderId;
-
+    
+            // 🛑 Prevent duplicate order creation
             if (!currentOrderId) {
-                // Submit order if it's not placed yet
-                const orderData = {
-                    userId,
-                    items: cart.map(item => ({
-                        productId: item.id,
-                        quantity: item.quantity,
-                        price: item.price,
-                    })),
-                    total_price: grandTotal,
-                    shipping_address: `${address.street}, ${address.district}, ${address.city}, ${address.postalCode}`
-                };
-
-                const orderResponse = await fetch("http://localhost:3000/order", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(orderData),
-                });
-
-                if (!orderResponse.ok) {
-                    throw new Error("Order submission failed.");
+                const existingOrderId = localStorage.getItem("orderId"); // ✅ Check if an order ID already exists
+                if (existingOrderId) {
+                    currentOrderId = existingOrderId;
+                } else {
+                    // ✅ Submit order only if it doesn't exist
+                    const orderData = {
+                        userId,
+                        items: cart.map(item => ({
+                            productId: item.id,
+                            quantity: item.quantity,
+                            price: item.price,
+                        })),
+                        total_price: grandTotal,
+                        shipping_address: `${address.street}, ${address.district}, ${address.city}, ${address.postalCode}`
+                    };
+    
+                    const orderResponse = await fetch("http://localhost:3000/order", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(orderData),
+                    });
+    
+                    if (!orderResponse.ok) {
+                        throw new Error("Order submission failed.");
+                    }
+    
+                    const orderResult = await orderResponse.json();
+                    currentOrderId = orderResult.id;
+                    setOrderId(currentOrderId);
+                    localStorage.setItem("orderId", currentOrderId); // ✅ Save order ID locally
                 }
-
-                const orderResult = await orderResponse.json();
-                currentOrderId = orderResult.id;
-                setOrderId(currentOrderId);
             }
-
-            // Proceed to payment
-            const paymentData = {
-                orderId: currentOrderId,
-                userId,
-                amount: grandTotal,
-                paymentMethod: "creditCard",
-            };
-
-            const paymentResponse = await fetch("http://localhost:3000/payment", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(paymentData),
-            });
-
-            if (!paymentResponse.ok) {
-                throw new Error("Payment failed.");
-            }
-
+    
+            // ✅ Proceed to payment
             if (location.pathname === "/checkout") {
                 navigate("/payment");
             } else {
+                // Only process payment when actually paying
+                const paymentData = {
+                    orderId: currentOrderId,
+                    userId,
+                    amount: grandTotal,
+                    paymentMethod: "creditCard",
+                };
+    
+                const paymentResponse = await fetch("http://localhost:3000/payment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(paymentData),
+                });
+    
+                if (!paymentResponse.ok) {
+                    throw new Error("Payment failed.");
+                }
+    
                 localStorage.removeItem("cart");
+                localStorage.removeItem("orderId"); // ✅ Remove orderId after payment is done
                 navigate("/");
             }
         } catch (error) {
@@ -95,6 +104,7 @@ const ContinueToPay = ({ cart, setCart, address }) => {
             alert("An error occurred. Please try again.");
         }
     };
+    
 
     return (
         <div className="your-order">

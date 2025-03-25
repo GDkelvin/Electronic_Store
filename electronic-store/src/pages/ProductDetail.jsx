@@ -5,6 +5,9 @@ import "../css/ProductDetail.css";
 import BasicProductDetails from "../components/ProductDetail/BasicProductDetails"
 import Breadcrumb from "../components/Breadcrumb";
 import { useParams } from "react-router-dom";
+import RatingComment from "../components/ProductDetail/CommentAndRating";
+import DisplayComment from "../components/ProductDetail/DisplayComment";
+
 const ProductDetail = () => {
     const { id } = useParams();
     const [product, setProduct] = useState();
@@ -15,7 +18,7 @@ const ProductDetail = () => {
             try {
                 const response = await fetch(`http://localhost:3000/products/${id}`)
                 const data = await response.json();
-                console.log(`Product ${id}: `,data);
+                console.log(`Product ${id}: `, data);
                 setProduct(data);
                 setLoading(false);
             } catch (e) {
@@ -24,26 +27,33 @@ const ProductDetail = () => {
         }
         fetchProduct();
     }, [id])
-    if(loading){
+    if (loading) {
         return (<p>Loading...</p>)
     }
-    if(!product){
+    if (!product) {
         return (<p>Loading...</p>)
     }
-    
+
     return (
         <>
             <Breadcrumb></Breadcrumb>
             <div className="BPD">
-                
                 <div >
-                    <BasicProductDetails product={product}/>
-                    <TechnicalDetails attributes={product.attributes}/>
+                    <BasicProductDetails product={product} />
+                    <TechnicalDetails attributes={product.attributes} />
+
+                </div>
+                <div >
+                    <AddToCart product={product} />
+                </div>
+            </div>
+            <div className="BPD-Comment">
+                <RatingComment></RatingComment>
+                <div style={{width: "100%", maxWidth:"956px"}}>
+                    <DisplayComment></DisplayComment>
+                    <DisplayComment></DisplayComment>
                 </div>
 
-                <div >
-                    <AddToCart product={product}/>
-                </div>
             </div>
         </>
     )

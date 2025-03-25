@@ -25,7 +25,6 @@ export class ProductsService {
   async create(createProductDto: CreateProductDto) {
     const { categoryId, brandId, ...productData } = createProductDto;
 
-
     const category = await this.categoryRepository.findOne({ where: { id: categoryId } });
     const brand = await this.brandRepository.findOne({ where: { id: brandId } });
 

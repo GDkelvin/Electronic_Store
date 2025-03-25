@@ -37,14 +37,11 @@ const ContinueToPay = ({ cart, setCart, address }) => {
     
         try {
             let currentOrderId = orderId;
-    
-            // 🛑 Prevent duplicate order creation
             if (!currentOrderId) {
-                const existingOrderId = localStorage.getItem("orderId"); // ✅ Check if an order ID already exists
+                const existingOrderId = localStorage.getItem("orderId"); 
                 if (existingOrderId) {
                     currentOrderId = existingOrderId;
                 } else {
-                    // ✅ Submit order only if it doesn't exist
                     const orderData = {
                         userId,
                         items: cart.map(item => ({
@@ -69,15 +66,13 @@ const ContinueToPay = ({ cart, setCart, address }) => {
                     const orderResult = await orderResponse.json();
                     currentOrderId = orderResult.id;
                     setOrderId(currentOrderId);
-                    localStorage.setItem("orderId", currentOrderId); // ✅ Save order ID locally
+                    localStorage.setItem("orderId", currentOrderId); 
                 }
             }
     
-            // ✅ Proceed to payment
             if (location.pathname === "/checkout") {
                 navigate("/payment");
             } else {
-                // Only process payment when actually paying
                 const paymentData = {
                     orderId: currentOrderId,
                     userId,
@@ -96,7 +91,8 @@ const ContinueToPay = ({ cart, setCart, address }) => {
                 }
     
                 localStorage.removeItem("cart");
-                localStorage.removeItem("orderId"); // ✅ Remove orderId after payment is done
+                localStorage.removeItem("orderId"); 
+                alert("Payment Successful!")
                 navigate("/");
             }
         } catch (error) {

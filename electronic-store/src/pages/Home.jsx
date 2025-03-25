@@ -47,7 +47,7 @@ const Home = () => {
       <div className={styles["new-products"]}>
         <div className={styles["new-products-header"]}>
           <h2>New Products</h2>
-          <p>View all &gt;</p>
+          
         </div>
         <div className={styles["new-products-productCard"]}>
           {loading ? (
@@ -64,7 +64,7 @@ const Home = () => {
       <div className={styles["new-products"]}>
         <div className={styles["new-products-header"]}>
           <h2>Best Seller</h2>
-          <p>View all &gt;</p>
+          
         </div>
         <div className={styles["new-products-productCard"]}>
           {loading ? (

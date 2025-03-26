@@ -23,10 +23,11 @@ export class PaymentService {
     private readonly productRepository: Repository<Product>
   ) { }
 
+  //Create payment
   async processPayment(dto: CreatePaymentDto) {
     const { orderId, userId, amount, paymentMethod } = dto;
 
-    const order = await this.orderRepository.findOne({ where: { id: orderId }, relations: ['items', 'items.product'],  });
+    const order = await this.orderRepository.findOne({ where: { id: orderId }, relations: ['items', 'items.product'], });
     if (!order) throw new Error("Order not found");
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
@@ -39,6 +40,8 @@ export class PaymentService {
       payment_method: paymentMethod,
       status: "completed",
     });
+
+    
     await this.paymentRepository.save(payment);
     order.status = "paid";
     await this.orderRepository.save(order);
@@ -46,7 +49,7 @@ export class PaymentService {
     for (const item of order.items) {
       item.product.sales_count += item.quantity;
       await this.productRepository.save(item.product);
-  }
+    }
     return { message: "Payment successful", payment };
   }
 

@@ -5,6 +5,7 @@ import ContinueToPay from "../components/Payment/ContinueToPay";
 const Payment = () => {
     const [cart, setCart] = useState([]);
     const [address, setAddress] = useState(null);
+    const [paymentMethod, setPaymentMethod] = useState("creditCard");
 
     useEffect(() => {
         setCart(JSON.parse(localStorage.getItem("cart")) || []);
@@ -15,11 +16,23 @@ const Payment = () => {
         <div className="payment">
             <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div style={{ width: "60%" }}>
-                    <PaymentMethod address={address} />
-                    <a href="/checkout" style={{ color: "#0C68F4", marginTop: "20px", display: "block" }}>Return to Checkout</a>
+                    <PaymentMethod 
+                        address={address} 
+                        paymentMethod={paymentMethod} 
+                        setPaymentMethod={setPaymentMethod} 
+                    />
+                    <a href="/checkout" style={{ color: "#0C68F4", marginTop: "20px", display: "block" }}>
+                        Return to Checkout
+                    </a>
                 </div>
                 <div style={{ width: "40%" }}>
-                    <ContinueToPay cart={cart} address={address} isPaymentPage={true} />
+                    <ContinueToPay 
+                        cart={cart} 
+                        address={address} 
+                        paymentMethod={paymentMethod} 
+                        setPaymentMethod={setPaymentMethod} 
+                        isPaymentPage={true} 
+                    />
                 </div>
             </div>
         </div>

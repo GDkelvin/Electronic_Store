@@ -59,10 +59,18 @@
 
 .productCard img {
   width: 100%;
-  height: auto;
+  height: 140px; 
+  object-fit: contain; 
   border-radius: 5px;
 }
-
+.productCard h4 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limits to 2 lines */
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+}
 .oldPrice {
   text-decoration: line-through;
   color: gray;

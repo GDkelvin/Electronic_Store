@@ -1,4 +1,3 @@
-
 import "../../css/ShippingDetails.css";
 import { useState, useEffect } from "react";
 
@@ -12,16 +11,29 @@ const ShippingDetails = ({ setAddress }) => {
     });
 
     useEffect(() => {
-        const storedAddress = JSON.parse(localStorage.getItem("address"));
+        const storedAddress = localStorage.getItem("address");
         if (storedAddress) {
-            setLocalAddress(storedAddress);
+            setLocalAddress(JSON.parse(storedAddress));
         }
     }, []);
+
+    useEffect(() => {
+        const handleStorageChange = () => {
+            const newAddress = localStorage.getItem("address");
+            if (!newAddress) {
+                setLocalAddress({ street: "", district: "", city: "", postalCode: "" });
+                setAddress({ street: "", district: "", city: "", postalCode: "" });
+            }
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        return () => window.removeEventListener("storage", handleStorageChange);
+    }, [setAddress]);
 
     const [tempAddress, setTempAddress] = useState({ ...address });
 
     const handleOpenModal = () => {
-        setTempAddress(address); 
+        setTempAddress(address);
         setIsModalOpen(true);
     };
 

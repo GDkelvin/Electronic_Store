@@ -1,32 +1,35 @@
 import styles from "../../css/PaymentMethod.module.css";
 import { useState } from "react";
 
-const PaymentMethod = ({ address }) => {
-  const [paymentMethod, setPaymentMethod] = useState("creditCard");
-
+const PaymentMethod = ({ address, setPaymentMethod }) => {
+  const [selectedMethod, setSelectedMethod] = useState("creditCard");
+  const handleChange = (method) => {
+    setSelectedMethod(method);
+    setPaymentMethod(method); 
+  };
   return (
     <div className={styles.paymentBillingContainer}>
       <h3>Payment</h3>
       <div className={styles.paymentMethod}>
-        <label className={`${styles.label} ${paymentMethod === "creditCard" ? styles.selected : ""}`}>
+        <label className={`${styles.label} ${selectedMethod === "creditCard" ? styles.selected : ""}`}>
           <input
             type="radio"
             name="payment"
             value="creditCard"
-            checked={paymentMethod === "creditCard"}
-            onChange={() => setPaymentMethod("creditCard")}
+            checked={selectedMethod === "creditCard"}
+            onChange={() => handleChange("creditCard")}
           />
           <span>Credit Cards</span>
           <span className={styles.cardInfo}></span>
           <button className={styles.editButton}></button>
         </label>
-        <label className={`${styles.labelPaypal} ${paymentMethod === "paypal" ? styles.selected : ""}`}>
+        <label className={`${styles.labelPaypal} ${selectedMethod === "paypal" ? styles.selected : ""}`}>
           <input
             type="radio"
             name="payment"
             value="paypal"
-            checked={paymentMethod === "paypal"}
-            onChange={() => setPaymentMethod("paypal")}
+            checked={selectedMethod === "paypal"}
+            onChange={() => handleChange("paypal")}
           />
           <span className={styles.paypalText}>PayPal</span>
         </label>

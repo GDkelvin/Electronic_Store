@@ -1,7 +1,7 @@
 .BPD-container{
     display: flex;
     width: 869px;
-    max-height: 490px;
+    max-height: 380px;
     align-items: start;
     
 }
@@ -18,6 +18,8 @@
 
 .BPD-gallery-mainImg img{
     width: 100%;
+    max-width: 500px;
+    max-width: 400px;
     border-radius: 6px;
 }
 

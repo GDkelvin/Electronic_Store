@@ -3,18 +3,24 @@ import "../../css/ProductFilter.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 const ProductFilter = ({ onPriceChange, onBrandChange }) => {
-    const [minPrice, setMinPrice] = useState(0);
-    const [maxPrice, setMaxPrice] = useState(3000);
+    const default_min_price = 0;
+    const default_max_price = 10000;
+    const [minPrice, setMinPrice] = useState(default_min_price);
+    const [maxPrice, setMaxPrice] = useState(default_max_price);
     const [selectedBrands, setSelectedBrands] = useState([]);
 
     const handleMinChange = (e) => {
-        const value = Math.min(Number(e.target.value), maxPrice - 10);
+        let value = Number(e.target.value);
+        if (value < default_min_price) value = default_min_price;
+        if (value > maxPrice - 10) value = maxPrice - 10; 
         setMinPrice(value);
         onPriceChange({ min: value, max: maxPrice });
     };
 
     const handleMaxChange = (e) => {
-        const value = Math.max(Number(e.target.value), minPrice + 10);
+        let value = Number(e.target.value);
+        if (value > default_max_price) value = default_max_price; 
+        if (value < minPrice + 10) value = minPrice + 10; 
         setMaxPrice(value);
         onPriceChange({ min: minPrice, max: value });
     };
@@ -25,14 +31,14 @@ const ProductFilter = ({ onPriceChange, onBrandChange }) => {
             ? [...selectedBrands, value]
             : selectedBrands.filter((brand) => brand !== value);
         setSelectedBrands(updatedBrands);
-        onBrandChange(updatedBrands); // Pass the updated array correctly
+        onBrandChange(updatedBrands); 
     };
 
     const handleClearAll = () => {
-        setMinPrice(0);
-        setMaxPrice(3000);
+        setMinPrice(default_min_price);
+        setMaxPrice(default_max_price);
         setSelectedBrands([]);
-        onPriceChange({ min: 0, max: 3000 });
+        onPriceChange({ min: default_min_price, max: default_max_price });
         onBrandChange([]);
     };
 
@@ -46,9 +52,9 @@ const ProductFilter = ({ onPriceChange, onBrandChange }) => {
 
             {/* Brand Filter */}
             <div className="brand-filter">
-                <p>Brand <i className="bi bi-chevron-down"></i></p>
+                <p>Brand</p>
                 <div className="filter-content">
-                    {['Asus', 'Acer', 'Apple', 'Dell'].map((brand) => (
+                    {['Asus', 'Acer', 'Apple', 'Dell', 'Samsung'].map((brand) => (
                         <label key={brand}>
                             <input
                                 type="checkbox"
@@ -65,18 +71,18 @@ const ProductFilter = ({ onPriceChange, onBrandChange }) => {
 
             {/* Price Filter */}
             <div className="Price-filter">
-                <p>Price <i className="bi bi-chevron-down"></i></p>
+                <p>Price </p>
                 <div className="price-input">
                     <input type="number" value={minPrice} onChange={handleMinChange} />
                     <input type="number" value={maxPrice} onChange={handleMaxChange} />
                 </div>
                 <div className="price-slider">
                     <div className="slider-track" style={{
-                        left: `${(minPrice / 3000) * 100}%`,
-                        right: `${100 - (maxPrice / 3000) * 100}%`
+                        left: `${(minPrice / default_max_price) * 100}%`,
+                        right: `${100 - (maxPrice / default_max_price) * 100}%`
                     }}></div>
-                    <input type="range" min="0" max="3000" value={minPrice} onChange={handleMinChange} />
-                    <input type="range" min="0" max="3000" value={maxPrice} onChange={handleMaxChange} />
+                    <input type="range" min={default_min_price} max={default_max_price} value={minPrice} onChange={handleMinChange} />
+                    <input type="range" min={default_min_price} max={default_max_price} value={maxPrice} onChange={handleMaxChange} />
                 </div>
             </div>
 

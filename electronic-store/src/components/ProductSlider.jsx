@@ -53,7 +53,7 @@ const ProductSlider = ({ products }) => {
                   <Link to={`/products/${product.id}`} style={{ textDecoration: "none", color: "inherit" }}>
                     <div className={styles.productCard}>
                       <span className={styles.discountBadge}>-{(discount * 100).toFixed(0)}%</span>
-                      <img src={laptopImg} alt={product.name} />
+                      <img src={product.image} alt={product.name} />
                       <h4>{product.name}</h4>
                       <p className={styles.oldPrice}>${formattedOriginalPrice}</p>
                       <p className={styles.newPrice}>${discountedPrice}</p>

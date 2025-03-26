@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TechnicalDetails from "../components/ProductDetail/TechnicalDetails";
 import AddToCart from "../components/ProductDetail/AddToCart";
 import "../css/ProductDetail.css";
-import BasicProductDetails from "../components/ProductDetail/BasicProductDetails"
+import BasicProductDetails from "../components/ProductDetail/BasicProductDetails";
 import Breadcrumb from "../components/Breadcrumb";
 import { useParams } from "react-router-dom";
 import RatingComment from "../components/ProductDetail/CommentAndRating";
@@ -10,53 +10,65 @@ import DisplayComment from "../components/ProductDetail/DisplayComment";
 
 const ProductDetail = () => {
     const { id } = useParams();
-    const [product, setProduct] = useState();
+    const [product, setProduct] = useState(null);
+    const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchProduct = async () => {
+        const fetchProductAndReviews = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/products/${id}`)
-                const data = await response.json();
-                console.log(`Product ${id}: `, data);
-                setProduct(data);
+                const productResponse = await fetch(`http://localhost:3000/products/${id}`);
+                const productData = await productResponse.json();
+
+                const reviewsResponse = await fetch(`http://localhost:3000/review?productId=${id}`);
+                const reviewsData = await reviewsResponse.json();
+
+                setProduct(productData);
+                setReviews(reviewsData);
                 setLoading(false);
-            } catch (e) {
-                console.error("failed to fetch data: ", e.message);
+            } catch (error) {
+                console.error("Failed to fetch data:", error.message);
+                setLoading(false);
             }
-        }
-        fetchProduct();
-    }, [id])
+        };
+
+        fetchProductAndReviews();
+    }, [id]);
+
     if (loading) {
-        return (<p>Loading...</p>)
+        return <p>Loading...</p>;
     }
+
     if (!product) {
-        return (<p>Loading...</p>)
+        return <p>Product not found</p>;
     }
 
     return (
         <>
-            <Breadcrumb></Breadcrumb>
+            <Breadcrumb />
             <div className="BPD">
-                <div >
+                <div>
                     <BasicProductDetails product={product} />
                     <TechnicalDetails attributes={product.attributes} />
-
                 </div>
-                <div >
+                <div>
                     <AddToCart product={product} />
                 </div>
             </div>
             <div className="BPD-Comment">
-                <RatingComment></RatingComment>
-                <div style={{width: "100%", maxWidth:"956px"}}>
-                    <DisplayComment></DisplayComment>
-                    <DisplayComment></DisplayComment>
+                <RatingComment productId={id} setReviews={setReviews} />
+                <div style={{ width: "100%", display: "flex", flexDirection: "column" }}>
+                    {reviews.length > 0 ? (
+                        reviews.map((review) => (
+                            <DisplayComment key={review.id} review={review} />
+                        ))
+                    ) : (
+                        <p>No reviews yet.</p>
+                    )}
                 </div>
-
             </div>
         </>
-    )
-}
+    );
+};
 
-export default ProductDetail
+export default ProductDetail;

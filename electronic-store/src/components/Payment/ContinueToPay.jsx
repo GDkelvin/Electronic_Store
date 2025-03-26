@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "../../css/ContinueToPay.css";
 
-const ContinueToPay = ({ cart, setCart, address }) => {
+const ContinueToPay = ({ cart, address, paymentMethod }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [orderId, setOrderId] = useState(null);
@@ -21,24 +21,24 @@ const ContinueToPay = ({ cart, setCart, address }) => {
             alert("Please enter a shipping address before proceeding.");
             return;
         }
-    
+
         const storedUser = localStorage.getItem("user");
         if (!storedUser) {
             alert("You must be logged in to place an order.");
             return;
         }
-    
+
         const user = JSON.parse(storedUser);
         const userId = user?.id;
         if (!userId) {
             alert("User ID is missing. Please log in again.");
             return;
         }
-    
+
         try {
             let currentOrderId = orderId;
             if (!currentOrderId) {
-                const existingOrderId = localStorage.getItem("orderId"); 
+                const existingOrderId = localStorage.getItem("orderId");
                 if (existingOrderId) {
                     currentOrderId = existingOrderId;
                 } else {
@@ -52,46 +52,50 @@ const ContinueToPay = ({ cart, setCart, address }) => {
                         total_price: grandTotal,
                         shipping_address: `${address.street}, ${address.district}, ${address.city}, ${address.postalCode}`
                     };
-    
+
                     const orderResponse = await fetch("http://localhost:3000/order", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(orderData),
                     });
-    
+
                     if (!orderResponse.ok) {
                         throw new Error("Order submission failed.");
                     }
-    
+
                     const orderResult = await orderResponse.json();
                     currentOrderId = orderResult.id;
                     setOrderId(currentOrderId);
-                    localStorage.setItem("orderId", currentOrderId); 
+                    localStorage.setItem("orderId", currentOrderId);
                 }
             }
-    
+
             if (location.pathname === "/checkout") {
                 navigate("/payment");
             } else {
+                console.log("Selected Payment Method:", paymentMethod); // Debugging
+
                 const paymentData = {
                     orderId: currentOrderId,
                     userId,
                     amount: grandTotal,
-                    paymentMethod: "creditCard",
+                    paymentMethod: paymentMethod,
                 };
-    
+
                 const paymentResponse = await fetch("http://localhost:3000/payment", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(paymentData),
                 });
-    
+
                 if (!paymentResponse.ok) {
                     throw new Error("Payment failed.");
                 }
-    
+
                 localStorage.removeItem("cart");
-                localStorage.removeItem("orderId"); 
+                localStorage.removeItem("orderId");
+                localStorage.removeItem("address");  
+                window.dispatchEvent(new Event("storage"));
                 alert("Payment Successful!")
                 navigate("/");
             }
@@ -100,7 +104,6 @@ const ContinueToPay = ({ cart, setCart, address }) => {
             alert("An error occurred. Please try again.");
         }
     };
-    
 
     return (
         <div className="your-order">

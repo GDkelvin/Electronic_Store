@@ -37,11 +37,17 @@ export class ReviewService {
     return { message: "Comment successful!", review };
   }
 
-  async findAll() {
-    return this.reviewRepository.find({
-      relations: ['user', 'product'],
-      order: { created_at: 'DESC' },
-    });
+  async findAll(productId?: number) {
+    const query = this.reviewRepository.createQueryBuilder('review').leftJoinAndSelect('review.user', 'user').leftJoinAndSelect('review.product','product').orderBy('review.created_at', 'DESC');
+    if(productId){
+      query.where('review.product.id = :productId', {productId});
+    }
+
+    return query.getMany();
+    // return this.reviewRepository.find({
+    //   relations: ['user', 'product'],
+    //   order: { created_at: 'DESC' },
+    // });
   }
 
   async getAverageRating(productId: number) {

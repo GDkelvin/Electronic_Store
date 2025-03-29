@@ -24,7 +24,7 @@ const Product = () => {
           url += `category=${selectedCategory}&`;
         }
         if (selectedBrands.length > 0) {
-          url += `brand=${selectedBrands.join(",")}&`; // Convert array to comma-separated string
+          url += `brand=${selectedBrands.join(",")}&`; 
         }
         const response = await fetch(url);
         const data = await response.json();

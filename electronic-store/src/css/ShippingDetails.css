@@ -8,7 +8,8 @@
     display: flex;
     flex-direction: column;
 }
-.SD-container input{
+.SD-container input,
+.SD-container select {
     color: #2D2D2D;
     padding: 10px;
     border: none;
@@ -73,12 +74,24 @@
     margin-top: 10px;
 }
 
-.modal input {
+.modal input,
+.modal select {
     width: 90%;
     padding: 10px;
     margin-bottom: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
+    background-color: #F6F6F6;
+    color: #2D2D2D;
+}
+
+.modal select {
+    appearance: none;
+    cursor: pointer;
+}
+
+.modal select:focus {
+    border-color: #007bff;
 }
 
 .modal-actions {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import "../../css/ContinueToPay.css";
 
 const ContinueToPay = ({ cart, address, paymentMethod }) => {
@@ -73,8 +74,7 @@ const ContinueToPay = ({ cart, address, paymentMethod }) => {
             if (location.pathname === "/checkout") {
                 navigate("/payment");
             } else {
-                console.log("Selected Payment Method:", paymentMethod); // Debugging
-
+                console.log("Selected Payment Method:", paymentMethod);
                 const paymentData = {
                     orderId: currentOrderId,
                     userId,
@@ -96,7 +96,7 @@ const ContinueToPay = ({ cart, address, paymentMethod }) => {
                 localStorage.removeItem("orderId");
                 localStorage.removeItem("address");  
                 window.dispatchEvent(new Event("storage"));
-                alert("Payment Successful!")
+                alert("Payment Successful!");
                 navigate("/");
             }
         } catch (error) {
@@ -156,9 +156,29 @@ const ContinueToPay = ({ cart, address, paymentMethod }) => {
             </div>
 
             <div className="btn-continue">
-                <button onClick={handleOrderSubmit}>
-                    {location.pathname === "/checkout" ? "Continue to Pay" : "Complete Payment"}
-                </button>
+                {paymentMethod === "paypal" ? (
+                    <PayPalScriptProvider options={{ "client-id": "AT8z_ChKDsCojUIIJOI00SktvSaD7K8NmQZp2OPjd4K7n2zAx3RIrO53K75VhIAwWaz6qxVwfRPmvU4_" }}>
+                        <PayPalButtons
+                            createOrder={(data, actions) => {
+                                return actions.order.create({
+                                    purchase_units: [{
+                                        amount: { value: grandTotal.toFixed(2) }
+                                    }]
+                                });
+                            }}
+                            onApprove={(data, actions) => {
+                                return actions.order.capture().then(async (details) => {
+                                    await handleOrderSubmit(details);  
+                                });
+                            }}
+                            
+                        />
+                    </PayPalScriptProvider>
+                ) : (
+                    <button onClick={handleOrderSubmit}>
+                        {location.pathname === "/checkout" ? "Continue to Pay" : "Complete Payment"}
+                    </button>
+                )}
             </div>
         </div>
     );

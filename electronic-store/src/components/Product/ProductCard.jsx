@@ -15,7 +15,7 @@ const ProductCard = ({ product }) => {
                     throw new Error("Failed to fetch average rating");
                 }
                 const data = await response.json();
-                setAverageRating(data.averageRating.toFixed(1)); 
+                setAverageRating(data.averageRating.toFixed(1));
             } catch (error) {
                 console.error("Error fetching rating:", error);
             }
@@ -52,12 +52,15 @@ const ProductCard = ({ product }) => {
                     <p className="product-name">{product.name}</p>
 
                     <div className="product-footer">
-                        <span className="product-price">${discountedPrice}</span>
-                        {discount > 0 && (
-                            <span className="product-old-price" style={{ textDecoration: "line-through", color: "gray", marginLeft: "8px" }}>
-                                ${formattedOriginalPrice}
-                            </span>
-                        )}
+                        <div>
+                            <span className="product-price">${discountedPrice}</span>
+                            {discount > 0 && (
+                                <span className="product-old-price" style={{ textDecoration: "line-through", color: "gray", marginLeft: "8px" }}>
+                                    ${formattedOriginalPrice}
+                                </span>
+                            )}
+                        </div>
+
                         <div className="product-rating">
                             <i className="bi bi-star-fill star-icon"></i>
                             <span className="rating-score">{averageRating}</span>

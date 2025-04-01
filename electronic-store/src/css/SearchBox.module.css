@@ -1,6 +1,6 @@
 
 .searchBox {
-    width: 600px;
+    width: 800px;
     max-width: 90%;
     background: white;
     border-radius: 8px;
@@ -11,6 +11,7 @@
     transform: translate(-50%, -50%);
     z-index: 1000;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    
 }
 
 .searchHeader {
@@ -55,12 +56,14 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px;
+    padding: 15px;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
     transition: background 0.3s;
 }
-
+.productItem p{
+    font-size: 16px;
+}
 .productItem:hover {
     background: rgba(0, 0, 255, 0.05);
 }
@@ -87,8 +90,8 @@
 }
 
 .productImage {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
     object-fit: cover;
     border-radius: 4px;
 }

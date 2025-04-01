@@ -168,7 +168,11 @@ const ContinueToPay = ({ cart, address, paymentMethod }) => {
                             }}
                             onApprove={(data, actions) => {
                                 return actions.order.capture().then(async (details) => {
+                                    alert(`Payment Successful! Transaction ID: ${details.id}`);
                                     await handleOrderSubmit(details);  
+                                    setTimeout(() => {
+                                        navigate("/");
+                                    }, 4000);
                                 });
                             }}
                             

@@ -22,7 +22,6 @@ function App() {
           <Route path="/cart" element={<Cart></Cart>}/>
           <Route path="/checkout" element={<Checkout></Checkout>}/>
           <Route path="/payment" element={<Payment></Payment>}/>
-          
         </Route>
       </Routes>
     </>

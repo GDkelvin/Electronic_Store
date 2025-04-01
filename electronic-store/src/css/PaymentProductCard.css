@@ -6,12 +6,12 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 .PPD-image{
-    width: 240px;
+    max-width: 120px;
     display: flex;
     align-items: center;
 }
 .PPD-image img {
-    width: 100%;
+    width: 90%;
     border-radius: 8px;
 }
 

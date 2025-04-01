@@ -25,8 +25,8 @@ function Login() {
             const response = await axios.post("http://localhost:3000/user/login", form);
             const user = response.data.user;
             localStorage.setItem("user", JSON.stringify(user));
-
             setMessage(response.data.message);
+            
             alert("Login successfully");
             window.location.reload(); 
             

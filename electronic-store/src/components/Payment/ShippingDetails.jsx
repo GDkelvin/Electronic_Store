@@ -15,11 +15,17 @@ const ShippingDetails = ({ setAddress }) => {
         city: "",
         postalCode: ""
     });
-
+    const [firstName, setFirstName] = useState("");
     useEffect(() => {
         const storedAddress = localStorage.getItem("address");
         if (storedAddress) {
             setLocalAddress(JSON.parse(storedAddress));
+        }
+
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            setFirstName(user.first_name || "User"); 
         }
     }, []);
 
@@ -58,7 +64,7 @@ const ShippingDetails = ({ setAddress }) => {
         <div className="Shipping-detail">
             <div className="SD-container">
                 <label>User</label>
-                <input type="text" value="Quoc Bao" readOnly />
+                <input type="text" value={firstName} readOnly />
 
                 <label>Ship to</label>
                 <div className="editable-input">

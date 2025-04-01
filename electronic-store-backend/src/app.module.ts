@@ -27,6 +27,7 @@ import { CartModule } from './cart/cart.module';
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
+    
     UserModule,
     ProductsModule,
     CategoryModule,
